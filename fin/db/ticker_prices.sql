@@ -1,11 +1,10 @@
-CREATE TABLE findb.index_price_daily(
-   dt date NOT NULL,
-   idx varchar(255) NOT NULL,
-   open float NOT NULL,
-   high float NOT NULL,
-   low float NOT NULL,
-   close float NOT NULL,
-   adj_close float NOT NULL,
-   volume float NOT NULL,
-   UNIQUE KEY(dt, idx) 
-)ENGINE=INNODB;
+CREATE TABLE `findb.index_price_daily` (
+  `Date` date DEFAULT NULL,
+  `open` float DEFAULT NULL,
+  `high` float DEFAULT NULL,
+  `low` float DEFAULT NULL,
+  `close` float DEFAULT NULL,
+  `adj_close` float DEFAULT NULL,
+  `volume` float DEFAULT NULL,
+  UNIQUE KEY(Date) 
+) ENGINE=InnoDB)
