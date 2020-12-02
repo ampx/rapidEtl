@@ -1,0 +1,13 @@
+{"local": {
+  "type": "mysql",
+  "config": {"db":"bookmark",
+              "user":"bookmarkUser",
+              "password":"",
+              "host":"localhost",
+              "auth_plugin":"mysql_native_password"}
+},
+"record_bookmark": {
+  "type": "record_bookmark",
+  "config": {"classpath":"../common/resources/:../common/resources/LakeToolsCommon-1.0-SNAPSHOT.jar"}
+}}
+
