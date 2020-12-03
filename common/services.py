@@ -3,7 +3,7 @@ import common.bookmark.record_bookmark_service
 import json
 
 def get(service_name):
-    with open('../common/config.json') as f:
+    with open('./common/config.json') as f:
         config = json.load(f)
 
     type = config[service_name]['type']
