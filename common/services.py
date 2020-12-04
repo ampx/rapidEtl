@@ -2,8 +2,10 @@ import common.datasource.mysql
 import common.bookmark.record_bookmark_service
 import json
 
+from pathlib import Path
+
 def get(service_name):
-    with open('./common/config.json') as f:
+    with open(str(Path(__file__).parent) + '/config.json') as f:
         config = json.load(f)
 
     type = config[service_name]['type']
