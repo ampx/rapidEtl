@@ -1,5 +1,5 @@
 import mysql.connector as sql
-from sqlalchemy import create_engine
+import pandas as pd
 
 class MySqlSource:
     config = None;
@@ -8,15 +8,15 @@ class MySqlSource:
         self.config = config
 
     def sql(self, sql_string):
-        #cnx = sql.connect(**self.config)
-        #cursor = cnx.cursor()
-        #cursor.execute(sql_string)
-        #cursor.close()
-        #cnx.close()
-        self.create_engine().execute(sql_string)
+        cnx = self.create_connection()
+        cursor = cnx.cursor()
+        cursor.execute(sql_string)
+        cursor.close()
+        cnx.close()
+        #self.create_engine().execute(sql_string)
 
     def duplicate_update(self, df, table_name, sum_fields=[], append_fields=[], overwrite_nulls=[]):
-        engine = self.create_engine()
+        engine = self.create_connection()
         temp_table = table_name + '_temp_df'
         df.to_sql(con=engine, name=temp_table, if_exists='append')
         self.duplicate_update_subquery(table_name, 'Select * from '+temp_table,
@@ -37,18 +37,24 @@ class MySqlSource:
                           'if(' + table_name + '.' + overwrite_null + ' is NULL ,' + \
                           'subquery.' + overwrite_null + ',' + \
                           table_name + '.' + overwrite_null + '),'
-        self.create_engine.execute(sql_update.rstrip(','))
+        self.sql(sql_update.rstrip(','))
 
     def insert_df(self, df, table_name):
-        df.to_sql(con=self.create_engine(), name=table_name, if_exists='append')
+        df.to_sql(con=self.create_connection(), name=table_name, if_exists='append')
 
-    def create_engine(self):
-        url = 'mysql://' + self.config['user'] + ':' + self.config['password'] \
-                         + '@' + self.config['host']
-        if 'port' in self.config:
-            url += ':' + str(self.config['port'])
-        url += '/' + self.config['db']
-        for key, value in self.config.items():
-            if key not in ['user', 'password', 'host', 'port', 'db']:
-                url += '?' + key + '=' + value
-        return create_engine(url)
+    def create_connection(self):
+        return sql.connect(**self.config)
+
+    def get_df(self, query):
+        return pd.read_sql(query, self.create_connection())
+
+    #def create_engine(self):
+    #    url = 'mysql://' + self.config['user'] + ':' + self.config['password'] \
+    #                     + '@' + self.config['host']
+    #    if 'port' in self.config:
+    #        url += ':' + str(self.config['port'])
+    #    url += '/' + self.config['db']
+    #    for key, value in self.config.items():
+    #        if key not in ['user', 'password', 'host', 'port', 'db']:
+    #            url += '?' + key + '=' + value
+    #    return create_engine(url)

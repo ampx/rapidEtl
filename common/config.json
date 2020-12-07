@@ -8,6 +8,6 @@
 },
 "record_bookmark": {
   "type": "record_bookmark",
-  "config": {"classpath":"../common/resources/:../common/resources/LakeToolsCommon-1.0-SNAPSHOT.jar"}
+  "config": {"classpath":"/home/eng-admin/common-services/tools:/home/eng-admin/common-services/tools/LakeToolsCommon-1.0-SNAPSHOT.jar"}
 }}
 

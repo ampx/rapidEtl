@@ -3,40 +3,58 @@ from py4j.java_gateway import JavaGateway
 from common.util import util
 
 class BookmarkService:
-
-    BookmarkService_class = None;
+    bookmark_java_instance = None;
     Time_class = None;
+    gw = None;
 
     def __init__(self, config):
-        classpath = config['classpath']
-        gw = JavaGateway.launch_gateway(classpath=classpath)
-        self.BookmarkService_class = gw.jvm.service.bookmark.RecordBookmarkService
-        self.Time_class = gw.jvm.model.util.time.Time
+        classpath = config.get('classpath')
+        id_batch_size = config.get('id_batch_size')
+        second_batch_size = config.get('second_batch_size')
+        rollover_id = config.get('rollover_id')
+        self.gw = JavaGateway.launch_gateway(classpath=classpath)
+        self.bookmark_java_instance = self.gw.jvm.service.bookmark.RecordBookmarkService(config['bookmark_name'])
+        self.bookmark_java_instance.setRangeSize(id_batch_size)
+        self.bookmark_java_instance.setRolloverId(rollover_id)
+        self.bookmark_java_instance.setRangeTimeSize(second_batch_size)
+        self.Time_class = self.gw.jvm.model.util.time.Time
 
     def create_bookmark(self, bookmark_name, initial_id, initial_time):
-        initial_time_str = None
-        if initial_time is not None:
-            initial_time_str = util.datetime_to_json(initial_time)
-        self.BookmarkService_class.setupBookmark(bookmark_name, initial_id, initial_time_str)
+        self.bookmark_java_instance.setupBookmark(bookmark_name, initial_id,
+                                                                         self.datetime_to_javaTime(initial_time))
 
-    def get_last_record_time(self,bookmark_name):
-        return util.datetime_from_json(self.BookmarkService_class.getLastBookmark(bookmark_name).
+    def get_last_record_time(self):
+        return util.datetime_from_json(self.bookmark_java_instance.getLastBookmark().
                        getLastRecordTime().toString())
 
-    def get_last_record_id(self, bookmark_name):
-        return util.datetime_from_json(self.BookmarkService_class.getLastBookmark(bookmark_name).getLastRecordId())
+    def get_last_record_id(self):
+        return util.datetime_from_json(self.bookmark_java_instance.getLastBookmark().getLastRecordId())
 
-    def updateBookmark(self, bookmark=None, bookmark_name=None, id=None, time=None):
-        if bookmark is not None:
-            self.BookmarkService_class.updateBookmark(bookmark.bookmark_name, \
-                                                      self.datetime_to_javaTime(bookmark.process_start_time), \
-                                                      self.datetime_to_javaTime(bookmark.process_end_time), \
-                                                      bookmark.input_size, \
-                                                      bookmark.output_size, \
-                                                      bookmark.record_id, \
-                                                      self.datetime_to_javaTime(bookmark.record_time))
-        else:
-            self.BookmarkService_class.updateBookmark(bookmark_name, id, self.datetime_to_javaTime(time))
+    def insert_bookmark(self, id, time, input_size, processed_size, process_starttime, process_endtime):
+        bookmark = self.gw.jvm.model.bookmark.RecordBookmark()
+        bookmark.setLastRecordId(id)
+        bookmark.setLastRecordTime(self.datetime_to_javaTime(time))
+        bookmark.setInputSize(input_size)
+        bookmark.setProcessedSize(processed_size)
+        bookmark.setProcessStarttime(self.datetime_to_javaTime(process_starttime))
+        bookmark.setProcessEndtime(self.datetime_to_javaTime(process_endtime))
+        return self.bookmark_java_instance.updateBookmark(bookmark)
+
+    def insert_time(self, time):
+        bookmark = self.gw.jvm.model.bookmark.RecordBookmark()
+        bookmark.setLastRecordTime(self.datetime_to_javaTime(time))
+        return self.bookmark_java_instance.updateBookmark(bookmark)
+
+    def insert_id(self, id):
+        bookmark = self.gw.jvm.model.bookmark.RecordBookmark()
+        bookmark.setLastRecordId(id)
+        return self.bookmark_java_instance.updateBookmark(bookmark)
+
+    def id_iter(self, maxId):
+        return self.bookmark_java_instance.getIdIterator(maxId)
+
+    def time_iter(self, datetime_obj):
+        return self.bookmark_java_instance.getTimeIterator(self.datetime_to_javaTime(datetime_obj))
 
     def datetime_to_javaTime(self,datetime_obj):
         if datetime_obj is None:
