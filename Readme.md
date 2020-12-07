@@ -6,9 +6,9 @@
 RAPIDETLPATH=/path/to/your/project/rapidEtl-0.0.0
 
 #for now using libs from venv/
-RAPIDETLLIBSPATH=$RAPIDETLPATH/venv/lib/python3.6/site-packages/:
+RAPIDETLLIBSPATH=$RAPIDETLPATH/venv/lib/python3.6/site-packages/:$RAPIDETLPATH/venv/share
 
-export PYTHONPATH=$PYTHONPATH:$RAPIDETLPATH:/path/to/libs
+export PYTHONPATH=$PYTHONPATH:$RAPIDETLPATH:$RAPIDETLLIBSPATH
 
 ```
 
