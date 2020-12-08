@@ -22,8 +22,8 @@ import dateutil.parser as dateparser
 
 
 
-'''
-bookmark_name = "testBookmark"
+
+bookmark_name = "testBookmark34543"
 
 bookmark_service = services.get("record_bookmark", {"bookmark_name":bookmark_name, "id_batch_size":7, "rollover_id":34})
 
@@ -70,11 +70,12 @@ while iterator.hasNext():
 print('Inserting last range: ' + str(iterator.getRangeEnd()))
 bookmark_service.insert_id(iterator.getRangeEnd())
 print('**-----**')
-'''
+
 
 from datetime import date, timedelta, datetime
+from dateutil.parser import parse
 
-bookmark_name = "testBookmark"
+bookmark_name = "testBookmark4435"
 
 bookmark_service = services.get("record_bookmark", {"bookmark_name":bookmark_name, "second_batch_size":3500})
 
@@ -84,10 +85,11 @@ bookmark_service.insert_time(yesterday)
 
 print(bookmark_service.get_last_record_time())
 
-
 iterator = bookmark_service.time_iter(datetime.now())
 while iterator.hasNext():
     iterator.next()
     print('Start:' + iterator.getRangeStart().mysqlString())
     print('End:' + iterator.getRangeEnd().mysqlString())
     print('-----')
+
+bookmark_service.insert_time(parse(iterator.getRangeEnd().toString()))

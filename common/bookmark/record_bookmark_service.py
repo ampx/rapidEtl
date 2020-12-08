@@ -28,7 +28,7 @@ class BookmarkService:
                        getLastRecordTime().toString())
 
     def get_last_record_id(self):
-        return util.datetime_from_json(self.bookmark_java_instance.getLastBookmark().getLastRecordId())
+        return self.bookmark_java_instance.getLastBookmark().getLastRecordId()
 
     def insert_bookmark(self, id, time, input_size, processed_size, process_starttime, process_endtime):
         bookmark = self.gw.jvm.model.bookmark.RecordBookmark()
