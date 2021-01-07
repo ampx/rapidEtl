@@ -11,9 +11,11 @@ class MySqlSource:
         cnx = self.create_connection()
         cursor = cnx.cursor()
         cursor.execute(sql_string)
+        result = cursor.fetchone()
+        cnx.commit()
         cursor.close()
         cnx.close()
-        #self.create_engine().execute(sql_string)
+        return result
 
     def duplicate_update(self, df, table_name, sum_fields=[], append_fields=[], overwrite_nulls=[]):
         engine = self.create_connection()
@@ -24,7 +26,7 @@ class MySqlSource:
         engine.execute('DROP TABLE ' + temp_table)
 
     def duplicate_update_subquery(self, table_name, subquery, sum_fields=[], append_fields=[], overwrite_nulls=[]):
-        sql_update = 'INSERT INTO ' + table_name + ' ' + subquery + ' as subquery '
+        sql_update = 'INSERT INTO ' + table_name + ' SELECT * FROM (' + subquery + ') as subquery '
         sql_update += 'ON DUPLICATE KEY UPDATE '
         for sum_field in sum_fields:
             sql_update += table_name + '.' + sum_field + '=' + \
@@ -47,6 +49,20 @@ class MySqlSource:
 
     def get_df(self, query):
         return pd.read_sql(query, self.create_connection())
+
+    def get_spark_df(self, spark, query):
+        return spark.read.format("jdbc") \
+            .option("url", "jdbc:mysql://"+self.config["host"]+"/"+self.config["db"]) \
+            .option("driver", "com.mysql.jdbc.Driver") \
+            .option("dbtable", "(" + query + ") query").option("user", self.config["user"]) \
+            .option("password", self.config["password"]).load()
+
+    def append_spark_df(self, spark, df):
+        df.write.format() \
+            .option("url", "jdbc:mysql://" + self.config["host"] + "/" + self.config["db"]) \
+            .option("driver", "com.mysql.jdbc.Driver") \
+            .option("user", self.config["user"]) \
+            .option("password", self.config["password"]).mode("append")
 
     #def create_engine(self):
     #    url = 'mysql://' + self.config['user'] + ':' + self.config['password'] \
