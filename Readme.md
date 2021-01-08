@@ -25,7 +25,7 @@ Create new bookmark - record bookmark can use either record id or record time or
 >> bookmark_service.create_bookmark("tool_bookmark", 254, "1994-12-31")
 ```
 
-```
+```python
 import common.services as service
 from datetime import datetime
 
