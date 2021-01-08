@@ -110,37 +110,38 @@ if iterator.hasNext():
 
 configuration
 
-```
-{"service_name0": {
-  "type": "mysql",
-  "config": {"db":"database_name",
-              "user":"user",
-              "password":"",
-              "host":"localhost",
-              "auth_plugin":"mysql_native_password"}
-},
-"bookmark_name": {
-  "type": "record_bookmark",
-  "config": {"classpath":"/path/to/LakeToolsCommon/Jar"}
-},
-"mongodb_name": {
-  "type": "mongodb",
-  "config": {"db":"database_name",
-              "user":"user",
-              "password":"",
-              "host":"localhost",
-              "port":"",
-              "options":{}}
-},
-"logger_name": {
-  "type": "logger",
-  "config": {"logger_path":"path/to/store/log/files"}
-},
-"spark_name": {
-  "type": "spark",
-  "config": {"master_ip":"",
-             "master_port":"",
-             "options":{}}
-}
+```json
+{
+    "service_name0": {
+      "type": "mysql",
+      "config": {"db":"database_name",
+                  "user":"user",
+                  "password":"",
+                  "host":"localhost",
+                  "auth_plugin":"mysql_native_password"}
+    },
+    "bookmark_name": {
+      "type": "record_bookmark",
+      "config": {"classpath":"/path/to/LakeToolsCommon/Jar"}
+    },
+    "mongodb_name": {
+      "type": "mongodb",
+      "config": {"db":"database_name",
+                  "user":"user",
+                  "password":"",
+                  "host":"localhost",
+                  "port":"",
+                  "options":{}}
+    },
+    "logger_name": {
+      "type": "logger",
+      "config": {"logger_path":"path/to/store/log/files"}
+    },
+    "spark_name": {
+      "type": "spark",
+      "config": {"master_ip":"",
+                 "master_port":"",
+                 "options":{}}
+    }
 }
 ```
