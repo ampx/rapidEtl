@@ -53,6 +53,12 @@ configuration
 "logger_name": {
   "type": "logger",
   "config": {"logger_path":"path/to/store/log/files"}
+},
+"spark_name": {
+  "type": "spark",
+  "config": {"master_ip":"",
+             "master_port":"",
+             "options":{}}
 }
 }
 ```
