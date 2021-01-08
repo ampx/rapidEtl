@@ -22,7 +22,11 @@ https://drive.google.com/drive/folders/1L8ni2IIagJZerj8z2oQT1rNbSHRgqtur?usp=sha
 ```
 import common.services as service
 
-bookmark_service=service.get(service_name, service_config)
+#define unuque name for this bookmark
+bookmark_name = "unique_bookmark_name"
+bookmark_service=service.get("service_unique_name", {"bookmarkname":bookmark_name})
+
+
 
 ```
 
