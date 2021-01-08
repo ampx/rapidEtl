@@ -44,25 +44,22 @@ if last_recordId < recent_recordId:
     #perform needed calculations here
     #if processing is sucessful store more recent bookmark
     bookmark_service.insert_id(recent_recordId)
+```
 
+time based bookmark
 
-
-
-
-
-#time based bookmark
+```python
 last_recordTime=bookmark_service.get_last_record_time()
 recent_recordTime=mysql.sql("select max(publication_date) from library")[0]
 if last_recordTime < recent_recordTime
     #perform needed calculations here
     #if processing is sucessful store more recent bookmark
     bookmark_service.insert_time(recent_recordTime)
+```
 
+smarter bookmark with iterator & rollover
 
-
-
-
-#smarter bookmark with iterator & rollover
+```python
 bookmark_name = "unique_bookmark_name"
 bookmark_service=service.get("service_unique_name", {"bookmarkname":bookmark_name, "id_batch_size":1000, "rollover_id":9223372036854775807})
 
@@ -86,12 +83,11 @@ if iterator.hasNext():
     input_size=iterator.getRangeEnd() - last_recordId #optional value, assuming here that input size for processing is number of processed id
     processed_size=0 #optional value, user can define how to calculate the size post processed data
     bookmark_service.insert_bookmark(iterator.getRangeEnd(), None, input_size, processed_size, process_start, process_end)
+```
 
+time iterator bookmark
 
-
-
-
-
+```python
 bookmark_name = "unique_bookmark_name"
 bookmark_service=service.get("service_unique_name", {"bookmarkname":bookmark_name, "second_batch_size":3600})
 
@@ -110,8 +106,6 @@ if iterator.hasNext():
         #perform processing between batch_start and batch_end times
         
     bookmark_service.insert_bookmark(None, iterator.getRangeEnd(), None, None, None, None)
-    
-
 ```
 
 configuration
