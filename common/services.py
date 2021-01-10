@@ -25,3 +25,7 @@ def get(service_name = None, service_config=None, services_config=None):
         return common.bookmark.record_bookmark_service.BookmarkService(service_config)
     elif type == 'mongodb':
         return common.datasource.mongodb.MongoDBSource(service_config)
+    elif type == 'spark':
+        return common.datasource.spark.SparkSource(service_config)
+    elif type == 'logger':
+        return common.util.logger.Logger(service_config)

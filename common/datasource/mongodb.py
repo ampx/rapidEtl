@@ -8,17 +8,22 @@ class MongoDBSource:
         self.config = config
 
     def _connect_mongo(self):
-        if 'username' in self.config.keys():
-            mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (self.config['username'], self.config['password'], self.config['host'], self.config['port'], self.config['db'])
-            if 'config' in self.config.keys():
-                mongo_uri+='?'
-                config = self.config["config"]
-                for key in config:
-                    mongo_uri +='&'+key+"="+config[key]
-            conn = MongoClient(mongo_uri)
-        else:
-            conn = MongoClient(self.config['host'], self.config['port'])
+        conn = MongoClient(self._get_uri())
         return conn[self.config['db']]
+
+    def _get_uri(self):
+        mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (
+        self.config['user'], self.config['password'], self.config['host'], self.config['port'], self.config['db'])
+        if 'options' in self.config.keys():
+            mongo_uri += '?'
+            options = self.config["options"]
+            options_list = []
+            for key in options:
+                options_list.append(key + "=" + options[key])
+            options_str = '&'
+            options_str = options_str.join(options_list)
+            mongo_uri += options_str
+        return mongo_uri
 
     def get_df(self, query, collection):
         # Connect to MongoDB
@@ -30,12 +35,5 @@ class MongoDBSource:
         return df
 
     def get_spark_df(self, spark, query, collection):
-        mongo_uri = 'mongodb://%s:%s@%s:%s/%s.%s' % (
-        self.config['username'], self.config['password'], self.config['host'], self.config['port'], self.config['db'],
-                        collection)
-        if 'config' in self.config.keys():
-            mongo_uri += '?'
-            config = self.config["config"]
-            for key in config:
-                mongo_uri += '&' + key + "=" + config[key]
+        mongo_uri = self._get_uri()
         spark.read.format("mongo").option("uri", mongo_uri).option("pipeline", query).load()
