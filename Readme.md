@@ -21,8 +21,10 @@ https://drive.google.com/drive/folders/1L8ni2IIagJZerj8z2oQT1rNbSHRgqtur?usp=sha
 Create new bookmark - record bookmark can use either record id or record time or both
 
 ```
+>> import common.services as service
+>> from datetime import datetime
 >> bookmark_service=service.get("service_unique_name", {"bookmarkname":"tool_bookmark"})
->> bookmark_service.create_bookmark("tool_bookmark", 254, "1994-12-31")
+>> bookmark_service.create_bookmark("tool_bookmark", 254, datetime.strptime("1994-12-31", "%Y-%m-%d")
 ```
 
 ```python
