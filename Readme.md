@@ -18,6 +18,7 @@ need to figure out how to automaticly get this binary into common/reources:
 https://drive.google.com/drive/folders/1L8ni2IIagJZerj8z2oQT1rNbSHRgqtur?usp=sharing
 
 <H1> working with rapid etl</H1>
+<H2> bookmark service </H2>
 Create new bookmark - record bookmark can use either record id or record time or both
 
 ```
@@ -108,6 +109,15 @@ if iterator.hasNext():
         #perform processing between batch_start and batch_end times
         
     bookmark_service.insert_bookmark(None, iterator.getRangeEnd(), None, None, None, None)
+```
+
+<H2> MongoDB </H2>
+
+```python
+query='{"_id": "apples", "qty": 5"}'
+collection="collection_name"
+df = get_df(query, collection)
+df.head()
 ```
 
 configuration
