@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import pandas as pd
+import urllib
 
 class MongoDBSource:
     config = None;
@@ -13,7 +14,7 @@ class MongoDBSource:
 
     def _get_uri(self):
         mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (
-        self.config['user'], self.config['password'], self.config['host'], self.config['port'], self.config['db'])
+        urllib.quote(self.config['user']), urllib.quote(self.config['password']), self.config['host'], self.config['port'], self.config['db'])
         if 'options' in self.config.keys():
             mongo_uri += '?'
             options = self.config["options"]
