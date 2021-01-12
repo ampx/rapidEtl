@@ -112,7 +112,8 @@ if iterator.hasNext():
 ```
 
 <H2> MongoDB </H2>
-```
+
+```python
 query='{"_id": "apples", "qty": 5"}'
 collection="collection_name"
 df = get_df(query, collection)
