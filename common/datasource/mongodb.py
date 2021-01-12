@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import pandas as pd
-import urllib
+import urllib.parse
+import json
 
 class MongoDBSource:
     config = None;
@@ -14,7 +15,7 @@ class MongoDBSource:
 
     def _get_uri(self):
         mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (
-        urllib.quote(self.config['user']), urllib.quote(self.config['password']), self.config['host'], self.config['port'], self.config['db'])
+        urllib.parse.quote_plus(self.config['user']), urllib.parse.quote_plus(self.config['password']), self.config['host'], self.config['port'], self.config['db'])
         if 'options' in self.config.keys():
             mongo_uri += '?'
             options = self.config["options"]
@@ -30,7 +31,7 @@ class MongoDBSource:
         # Connect to MongoDB
         db = self._connect_mongo()
         # Make a query to the specific DB and Collection
-        cursor = db[collection].find(query)
+        cursor = db[collection].find(json.load(query))
         # Expand the cursor and construct the DataFrame
         df = pd.DataFrame(list(cursor))
         return df
