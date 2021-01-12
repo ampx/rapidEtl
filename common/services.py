@@ -1,9 +1,6 @@
-import common.datasource.mysql
-import common.datasource.mongodb
-import common.datasource.spark
-import common.bookmark.record_bookmark_service
-import common.bookmark.file_bookmark_service
-import common.util.logger
+import common.datasource as datasource
+import common.bookmark as bookmark
+import common.util as util
 import json
 
 from pathlib import Path
@@ -24,12 +21,20 @@ def get(service_name = None, service_config=None, services_config=None):
 
     type = services_config[service_name]['type']
     if type == 'mysql':
-        return common.datasource.mysql.MySqlSource(service_config)
+        import datasource.mysql as mysql
+        return mysql.MySqlSource(service_config)
     elif type == 'record_bookmark':
-        return common.bookmark.record_bookmark_service.BookmarkService(service_config)
+        import bookmark.record_bookmark_service as record_bookmark_service
+        return record_bookmark_service.BookmarkService(service_config)
+    elif type == '':
+        import bookmark.file_bookmark_service as file_bookmark_service
+        return file_bookmark_service.BookmarkService(service_config)
     elif type == 'mongodb':
-        return common.datasource.mongodb.MongoDBSource(service_config)
+        import datasource.mongodb as mongodb
+        return mongodb.MongoDBSource(service_config)
     elif type == 'spark':
-        return common.datasource.spark.SparkSource(service_config)
+        import datasource.spark as spark
+        return spark.SparkSource(service_config)
     elif type == 'logger':
-        return common.util.logger.Logger(service_config)
+        import util.logger as logger
+        return logger.Logger(service_config)
