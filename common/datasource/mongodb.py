@@ -39,4 +39,4 @@ class MongoDBSource:
 
     def get_spark_df(self, spark, query, collection):
         mongo_uri = self._get_uri(collection)
-        spark.read.format("mongo").option("uri", mongo_uri).option("pipeline", query).load()
+        return spark.read.format("mongo").option("uri", mongo_uri).option("pipeline", query).load()
