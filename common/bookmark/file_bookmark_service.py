@@ -31,6 +31,9 @@ class BookmarkService:
     def insert_filename(self, name):
         return self.insert_bookmark(name);
 
+    def delete_bookmark(self, name):
+        return self.bookmark_java_instance.deleteBookmark(name)
+
     def datetime_to_javaTime(self,datetime_obj):
         if datetime_obj is None:
             return None;

@@ -56,6 +56,15 @@ class BookmarkService:
     def time_iter(self, datetime_obj):
         return self.bookmark_java_instance.getTimeIterator(self.datetime_to_javaTime(datetime_obj))
 
+    def delete_bookmark(self, name):
+        return self.bookmark_java_instance.deleteBookmark(name)
+
+    def set_last_bookmark(self, last_id, last_time):
+        bookmark = self.gw.jvm.model.bookmark.RecordBookmark()
+        bookmark.setLastRecordId(last_id)
+        bookmark.setLastRecordTime(self.datetime_to_javaTime(last_time))
+        self.bookmark_java_instance.setLastBookmark(bookmark)
+
     def datetime_to_javaTime(self,datetime_obj):
         if datetime_obj is None:
             return None;
