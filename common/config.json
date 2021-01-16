@@ -1,13 +1,1 @@
-{"local": {
-  "type": "mysql",
-  "config": {"db":"bookmark",
-              "user":"bookmarkUser",
-              "password":"",
-              "host":"localhost",
-              "auth_plugin":"mysql_native_password"}
-},
-"record_bookmark": {
-  "type": "record_bookmark",
-  "config": {"classpath":"/home/eng-admin/common-services/tools:/home/eng-admin/common-services/tools/LakeToolsCommon-1.0-SNAPSHOT.jar"}
-}}
-
+/home/eng-admin/.rapidEtl/config.json
