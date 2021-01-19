@@ -117,6 +117,7 @@ if iterator.hasNext():
 import argparse
 import common.services as service
 from datetime import datetime
+from datetime import timedelta
 
 parser=argparse.ArgumentParser()
 parser.add_argument("-days_back", help="process data for a day that was 'days_back' ago")
@@ -132,10 +133,10 @@ days_back=start_time=end_time=batch_seconds=batch_ids=start_id=end_id=None
 timestamp_format="%Y-%m-%d %H:%M:%S.%f"
 if args["days_back"] is not None:
     days_back = int(args["days_back"])
-    start_time=(datetime.now() - datetime.timedelta(days=days_back))\
+    start_time=(datetime.now() - timedelta(days=days_back))\
         .replace(hour=0, minute=0, second=0, microsecond=0)
-    end_time=(datetime.now() - datetime.timedelta(days=days_back))\
-        .replace(hour=23, minute=59, second=59, microsecond=999)
+    end_time=(datetime.now() - timedelta(days=days_back))\
+        .replace(hour=23, minute=59, second=59, microsecond=999000)
 elif args["start_time"] is not None:
     start_time=datetime.strptime(args["start_time"], timestamp_format)
     if args["end_time"] is not None:
@@ -163,14 +164,14 @@ unique_logger_name = "unique_logger_name"
 log=service.get(logger_service_name).get_logger(unique_logger_name)
 mysql=service.get(mysql_service_name)
 bookmark_service=service.get(bookmark_service_name, 
-    {"bookmarkname":bookmark_name, "id_batch_size":batch_ids, 
-    "second_batch_size":batch_seconds "rollover_id":rollover_id})
+    {"bookmarkname":unique_bookmark_name, "id_batch_size":batch_ids, 
+    "second_batch_size":batch_seconds, "rollover_id":rollover_id})
 
 
 def time_processor(time_str_start, time_str_end):
     #define here time based processing
 
-def id_processor(id_start, time end):
+def id_processor(id_start, id_end):
     #define here id based processing
 
 if start_time is not None:#process using use defined time range
@@ -179,7 +180,10 @@ if start_time is not None:#process using use defined time range
     try:
         bookmark_service.set_last_bookmark(None, start_time)
         iterator = bookmark_service.time_iter(end_time)
-        if iterator.hasNext():
+        if batch_seconds is None or (end_time-start_time).total_seconds()<batch_seconds:
+            log.info("processing all the data at once, batch size not specified or range provided is too small")
+            id_processor(start_time, end_time)
+        else if iterator.hasNext():
             #loop to batch process data
             while iterator.hasNext():
                 iterator.next()
@@ -188,9 +192,6 @@ if start_time is not None:#process using use defined time range
                 time_processor(batch_start, batch_end)
             if batch_end < end_time:
                 id_processor(batch_end, end_time)
-        elif batch_seconds is None or (end_time-start_time).total_seconds()<batch_seconds:
-            log.info("processing all the data at once, batch size not specified or range provided is too small")
-            id_processor(start_time, end_time)
         else:
             log.info("nothing to process")
     except:
@@ -201,6 +202,8 @@ elif start_id is not None:#processing using user defined id range
     try:
         bookmark_service.set_last_bookmark(start_id, None)
         iterator = bookmark_service.id_iter(end_id)
+        elif batch_ids is None or (end_id-start_id)<batch_ids:
+            log.info("processing all the data at once, batch size not specified or range provided is too small")
         if iterator.hasNext():
             #loop to batch process data
             while iterator.hasNext():
@@ -210,8 +213,6 @@ elif start_id is not None:#processing using user defined id range
                 id_processor(batch_start, batch_end)
             if batch_end < end_id:
                 id_processor(batch_end, end_id)
-        elif batch_ids is None or (end_id-start_id)<batch_ids:
-            log.info("processing all the data at once, batch size not specified or range provided is too small")
             id_processor(start_id, end_id)
         else:
             log.info("nothing to process")
