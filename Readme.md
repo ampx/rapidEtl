@@ -118,6 +118,7 @@ import argparse
 import common.services as service
 from datetime import datetime
 from datetime import timedelta
+from datetime import datetime as dt
 
 parser=argparse.ArgumentParser()
 parser.add_argument("-days_back", help="process data for a day that was 'days_back' ago")
@@ -138,9 +139,9 @@ if args["days_back"] is not None:
     end_time=(datetime.now() - timedelta(days=days_back))\
         .replace(hour=23, minute=59, second=59, microsecond=999000)
 elif args["start_time"] is not None:
-    start_time=datetime.strptime(args["start_time"], timestamp_format)
+    start_time=dt.strptime(args["start_time"], timestamp_format)
     if args["end_time"] is not None:
-        end_time=datetime.strptime(args["end_time"], timestamp_format)
+        end_time=dt.strptime(args["end_time"], timestamp_format)
     else:
         end_time=datetime.now()
 
@@ -182,8 +183,8 @@ if start_time is not None:#process using use defined time range
         iterator = bookmark_service.time_iter(end_time)
         if batch_seconds is None or (end_time-start_time).total_seconds()<batch_seconds:
             log.info("processing all the data at once, batch size not specified or range provided is too small")
-            time_processor(datetime.strptime(start_time, timestamp_format),
-                datetime.strptime(endtime, timestamp_format))
+            time_processor(start_time.strftime(timestamp_format),
+                endtime.strftime(timestamp_format))
         else if iterator.hasNext():
             #loop to batch process data
             while iterator.hasNext():
@@ -192,7 +193,7 @@ if start_time is not None:#process using use defined time range
                 batch_end=iterator.getRangeEnd().mysqlString()
                 time_processor(batch_start, batch_end)
             if batch_end < end_time:
-                time_processor(batch_end, datetime.strptime(end_time, timestamp_format))
+                time_processor(batch_end, end_time.strptime(timestamp_format))
         else:
             log.info("nothing to process")
     except:
