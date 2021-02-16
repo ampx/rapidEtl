@@ -34,8 +34,10 @@ class BookmarkService:
         bookmark = self.gw.jvm.model.bookmark.RecordBookmark()
         bookmark.setLastRecordId(id)
         bookmark.setLastRecordTime(self.datetime_to_javaTime(time))
-        bookmark.setInputSize(input_size)
-        bookmark.setProcessedSize(processed_size)
+        if input_size is not None:
+                bookmark.setInputSize(float(input_size))
+        if processed_size is not None:
+                bookmark.setProcessedSize(float(processed_size))
         bookmark.setProcessStarttime(self.datetime_to_javaTime(process_starttime))
         bookmark.setProcessEndtime(self.datetime_to_javaTime(process_endtime))
         return self.bookmark_java_instance.updateBookmark(bookmark)
