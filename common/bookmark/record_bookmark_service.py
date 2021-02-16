@@ -12,7 +12,7 @@ class BookmarkService:
         id_batch_size = config.get('id_batch_size')
         second_batch_size = config.get('second_batch_size')
         rollover_id = config.get('rollover_id')
-        self.gw = JavaGateway.launch_gateway(classpath=classpath)
+        self.gw = JavaGateway.launch_gateway(classpath=classpath, die_on_exit=True)
         self.bookmark_java_instance = self.gw.jvm.service.bookmark.RecordBookmarkService(config['bookmark_name'])
         self.bookmark_java_instance.setRangeSize(id_batch_size)
         self.bookmark_java_instance.setRolloverId(rollover_id)
