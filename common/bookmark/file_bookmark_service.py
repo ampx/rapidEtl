@@ -8,7 +8,7 @@ class BookmarkService:
     gw = None;
 
     def __init__(self, config):
-        self.gw = JavaGateway.launch_gateway(classpath=config['classpath'])
+        self.gw = JavaGateway.launch_gateway(classpath=config['classpath'], die_on_exit=True)
         self.bookmark_java_instance = self.gw.jvm.service.bookmark.RecordBookmarkService(
             config['bookmark_name'],config['filepath'],config['filepattern'])
         self.Time_class = self.gw.jvm.model.util.time.Time
