@@ -164,15 +164,17 @@ unique_bookmark_name = "unique_bookmark_name"
 rollover_id=9223372036854775807#assuming signed bigint
 logger_service_name = "logger_service_name"
 unique_logger_name = "unique_logger_name"
-log=service.get(logger_service_name).get_logger(unique_logger_name)
+log=service.get(logger_service_name).get_logger(unique_logger_name + datetime.now().strftime(timestamp_format))
 mysql=service.get(mysql_service_name)
 bookmark_service=service.get(bookmark_service_name, 
-    {"bookmarkname":unique_bookmark_name, "id_batch_size":batch_ids, 
+    {"bookmark_name":unique_bookmark_name, "id_batch_size":batch_ids, 
     "second_batch_size":batch_seconds, "rollover_id":rollover_id})
 
 
-def time_processor(time_str_start, time_str_end):
+def time_processor(start_time, endtime):
     #define here time based processing
+    start_time.strftime(timestamp_format)
+    endtime.strftime(timestamp_format)
 
 def id_processor(id_start, id_end):
     #define here id based processing
@@ -185,30 +187,31 @@ if start_time is not None:#process using use defined time range
         iterator = bookmark_service.time_iter(end_time)
         if batch_seconds is None or (end_time-start_time).total_seconds()<batch_seconds:
             log.info("processing all the data at once, batch size not specified or range provided is too small")
-            time_processor(start_time.strftime(timestamp_format),
-                endtime.strftime(timestamp_format))
-        else if iterator.hasNext():
+            time_processor(start_time, endtime)
+        elif iterator.hasNext():
             #loop to batch process data
             while iterator.hasNext():
                 iterator.next()
-                batch_start=iterator.getRangeStart().mysqlString()
-                batch_end=iterator.getRangeEnd().mysqlString()
+                batch_start=datetime_from_json(iterator.getRangeStart().toString())
+                batch_end=datetime_from_json(iterator.getRangeEnd().toString())
                 time_processor(batch_start, batch_end)
             if batch_end < end_time:
-                time_processor(batch_end, end_time.strptime(timestamp_format))
+                time_processor(batch_end, end_time)
         else:
             log.info("nothing to process")
-    except:
+    except BaseException as error:
         log.error("failed processing data")
+        log.error(traceback.print_exc())
         #create potential automated cleanup here 
 elif start_id is not None:#processing using user defined id range
-    log.info("starting processing data between ids " + start_id + " and " + end_id)
+    log.info("starting processing data between ids " + str(start_id) + " and " + str(end_id))
     try:
         bookmark_service.set_last_bookmark(start_id, None)
         iterator = bookmark_service.id_iter(end_id)
-        elif batch_ids is None or (end_id-start_id)<batch_ids:
+        if batch_ids is None or (end_id-start_id)<batch_ids:
             log.info("processing all the data at once, batch size not specified or range provided is too small")
-        if iterator.hasNext():
+            id_processor(start_id, end_id)
+        elif iterator.hasNext():
             #loop to batch process data
             while iterator.hasNext():
                 iterator.next()
@@ -220,18 +223,19 @@ elif start_id is not None:#processing using user defined id range
             id_processor(start_id, end_id)
         else:
             log.info("nothing to process")
-    except:
+    except BaseException as error:
         log.error("failed processing data")
+        log.error(traceback.print_exc())
         #create potential automated cleanup here 
 else:#default processing using last bookmarked location
     log.info("resuming processing using bookmark")
     try:
         last_recordId=bookmark_service.get_last_record_id()
-        log.info("found last processed id " + last_recordId)
+        log.info("found last processed id " + str(last_recordId))
         #safe id query, this can help identify when id rolled over
         recent_recordId=mysql.sql(
             "select max(id) from library where publication_date=(select max(publication_date) from library)")[0]
-        log.info("new data available up to id " + recent_recordId)
+        log.info("new data available up to id " + str(recent_recordId))
         process_start = datetime.now()
         iterator = bookmark_service.id_iter(recent_recordId)
         if iterator.hasNext():
@@ -252,6 +256,7 @@ else:#default processing using last bookmarked location
             log.info("no data processed, either no new data available or volume of new data is smaller than batch size")
     except:
         log.error("failed processing data")
+        log.error(traceback.print_exc())
         #create potential automated cleanup here
 ```
 
