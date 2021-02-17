@@ -114,8 +114,10 @@ if iterator.hasNext():
 <H2> Template Script for batch processing mysql data</H2>
 
 ```python
+import traceback
 import argparse
 import common.services as service
+import common.util.util import datetime_from_json
 from datetime import datetime
 from datetime import timedelta
 from datetime import datetime as dt
