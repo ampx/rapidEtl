@@ -117,7 +117,7 @@ if iterator.hasNext():
 import traceback
 import argparse
 import common.services as service
-import common.util.util import datetime_from_json
+from common.util.util import datetime_from_json
 from datetime import datetime
 from datetime import timedelta
 from datetime import datetime as dt
@@ -220,7 +220,6 @@ elif start_id is not None:#processing using user defined id range
                 id_processor(batch_start, batch_end)
             if batch_end < end_id:
                 id_processor(batch_end, end_id)
-            id_processor(start_id, end_id)
         else:
             log.info("nothing to process")
     except BaseException as error:
