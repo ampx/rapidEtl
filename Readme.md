@@ -187,7 +187,7 @@ if start_time is not None:#process using use defined time range
         iterator = bookmark_service.time_iter(end_time)
         if batch_seconds is None or (end_time-start_time).total_seconds()<batch_seconds:
             log.info("processing all the data at once, batch size not specified or range provided is too small")
-            time_processor(start_time, endtime)
+            time_processor(start_time, end_time)
         elif iterator.hasNext():
             #loop to batch process data
             while iterator.hasNext():
