@@ -35,3 +35,6 @@ def get(service_name = None, service_config=None, services_config=None):
     elif type == 'logger':
         import common.util.logger as logger
         return logger.Logger(service_config)
+    elif type == 'bookmark':
+        import common.bookmark.bookmark_service as bookmark_service
+        return bookmark_service.Bookmark_Service(service_config)

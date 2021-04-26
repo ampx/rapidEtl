@@ -1,6 +1,7 @@
 import requests
 
 from common.bookmark.bookmark_context import Bookmark_Context
+from common.bookmark.bookmark_web_dao import Bookmark_Web_Dao
 
 """
 HEAD: /bookmarks - check if service is up
@@ -37,7 +38,7 @@ class Bookmark_Service:
     dao = None;
 
     def __init__(self, config):
-        self.dao = dao
+        self.dao = Bookmark_Web_Dao(config['bookmark_url'])
 
 
     def get_context(self, bookmark_name):

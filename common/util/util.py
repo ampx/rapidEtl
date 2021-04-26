@@ -5,3 +5,4 @@ def datetime_to_json(datetime_obj):
 
 def datetime_from_json(datetime_str):
     return datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+
