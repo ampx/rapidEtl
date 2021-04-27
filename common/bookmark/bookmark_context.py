@@ -18,11 +18,17 @@ class Bookmark_Context:
     def get_bookmarks(self, starttime=None, endtime=None, top=1):
         return self.dao.get_bookmarks(self.bookmark_name, starttime, endtime, top)
 
-    def update_bookmark(self, bookmarks):
+    def update_bookmarks(self, bookmarks):
         return self.dao.update_bookmarks(self.bookmark_name, bookmarks)
 
-    def save_bookmark(self, bookmarks):
-        return self.dao.update_bookmarks(self.bookmark_name, bookmarks)
+    def save_bookmarks(self, bookmarks):
+        return self.dao.save_bookmarks(self.bookmark_name, bookmarks)
+
+    def update_failed(self, bookmarks):
+        return self.dao.update_failed(self.bookmark_name, bookmarks)
+
+    def save_failed(self, bookmarks):
+        return self.dao.update_failed(self.bookmark_name, bookmarks)
 
     def lock(self):
         return self.dao.lock(self.bookmark_name, Bookmark_State.LOCKED)

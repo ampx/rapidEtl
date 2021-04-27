@@ -7,8 +7,11 @@ class Bookmark:
     timestamp = None
     metrics = None
 
-    def __init__(self, metrics={}, timestamp=datetime.now()):
-        self.timestamp = timestamp
+    def __init__(self, metrics={}, timestamp=None):
+        if timestamp is None:
+            self.timestamp = datetime.now()
+        else:
+            self.timestamp = timestamp
         self.metrics = metrics
 
     def toDict(self):

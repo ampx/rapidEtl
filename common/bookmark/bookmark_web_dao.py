@@ -51,7 +51,7 @@ class Bookmark_Web_Dao:
                 result.append(Bookmark(metrics=json['metric'], timestamp=json["timestamp"]["instant"]))
         return result
 
-    def save_bookmark(self, bookmark_name, bookmarks):
+    def save_bookmarks(self, bookmark_name, bookmarks):
         bookmark_list = []
         for bookmark in bookmarks:
             bookmark_list.append(bookmark.toDict())
@@ -67,7 +67,7 @@ class Bookmark_Web_Dao:
         except BaseException as error:
             raise TypeError(self.manual_update_post(bookmark_list, url)) from error
 
-    def update_bookmark(self, bookmark_name, bookmarks):
+    def update_bookmarks(self, bookmark_name, bookmarks):
         bookmark_list = []
         for bookmark in bookmarks:
             bookmark_list.append(bookmark.toDict())
