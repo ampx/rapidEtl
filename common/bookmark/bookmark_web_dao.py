@@ -29,7 +29,7 @@ class Bookmark_Web_Dao:
         response = requests.put(self.bookmark_url, json={"name": bookmark_name, "config": config},
                                 headers={'content-type': 'application/json'}).json()
         if 'success' in response:
-            return response['success']
+            return response.get('success')
         else:
             return False
 
@@ -48,7 +48,9 @@ class Bookmark_Web_Dao:
             response = requests.get(self.bookmark_url + "/" + bookmark_name + "/bookmark?data=*", params=params).json()
         if len(response) > 0:
             for json in response:
-                result.append(Bookmark(metrics=json['metric'], timestamp=json["timestamp"]["instant"]))
+                metric = json.get('metrics')
+                timestamp = util.datetime_from_json(json.get("timestamp").get("time"))
+                result.append(Bookmark(metrics=metric, timestamp=timestamp))
         return result
 
     def save_bookmarks(self, bookmark_name, bookmarks):
@@ -61,7 +63,7 @@ class Bookmark_Web_Dao:
                                      headers={'content-type': 'application/json'}).json()
 
             if 'success' in response:
-                return response['success']
+                return response.get('success')
             else:
                 return False
         except BaseException as error:
@@ -76,7 +78,7 @@ class Bookmark_Web_Dao:
             response = requests.put(url, json=bookmark_list,
                                     headers={'content-type': 'application/json'}).json()
             if 'success' in response:
-                return response['success']
+                return response.get('success')
             else:
                 return False
         except BaseException as error:
@@ -92,7 +94,7 @@ class Bookmark_Web_Dao:
                                      headers={'content-type': 'application/json'}).json()
 
             if 'success' in response:
-                return response['success']
+                return response.get('success')
             else:
                 return False
         except BaseException as error:
@@ -107,7 +109,7 @@ class Bookmark_Web_Dao:
             response = requests.put(url, json=bookmark_list,
                                     headers={'content-type': 'application/json'}).json()
             if 'success' in response:
-                return response['success']
+                return response.get('success')
             else:
                 return False
         except BaseException as error:
@@ -120,7 +122,7 @@ class Bookmark_Web_Dao:
             response = requests.put(url, json=message,
                                     headers={'content-type': 'application/json'}).json()
             if 'success' in response:
-                return response['success']
+                return response.get('success')
             else:
                 return False
         except BaseException as error:
@@ -129,7 +131,7 @@ class Bookmark_Web_Dao:
     def get_state(self, bookmark_name):
         params = {}
         response = requests.get(self.bookmark_url + "/" + bookmark_name + "/state", params=params).json()
-        return Bookmark_State(response['state'])
+        return Bookmark_State(response.get('state'))
 
     def manual_update_post(self, body, url):
         return "curl -d '" + str(body) + "' -H 'Content-Type: application/json' -X POST " + url

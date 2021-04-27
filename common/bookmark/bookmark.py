@@ -15,4 +15,4 @@ class Bookmark:
         self.metrics = metrics
 
     def toDict(self):
-        return {"timestamp": {"instant": util.datetime_to_json(self.timestamp)}, "metrics": self.metrics}
+        return {"timestamp": {"time": util.datetime_to_json(self.timestamp)}, "metrics": self.metrics}

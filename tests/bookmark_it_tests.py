@@ -36,11 +36,11 @@ class BookmarkItTest(unittest.TestCase):
         bookmarks.append(Bookmark(metrics={"metric2": "value2", "metric3": "value3"}))
         bookmark_context.save_bookmarks(bookmarks)
 
-        bookmarks = bookmark_context.get_bookmarks(top=1)
-        bookmark = bookmarks.get(0)
-        bookmark.replace(microsecond=0)
-        last_bookmark_created = bookmarks.get(1)
-        last_bookmark_created.replace(microsecond=0)
+        bookmarks_from_server = bookmark_context.get_bookmarks(top=1)
+        bookmark = bookmarks[1]
+        bookmark.timestamp = bookmark.timestamp.replace(microsecond=0)
+        last_bookmark_created = bookmarks_from_server[0]
+        last_bookmark_created.timestamp = last_bookmark_created.timestamp.replace(microsecond=0)
         self.assertEqual(bookmark.timestamp == last_bookmark_created.timestamp, True)
         self.assertEqual(bookmark.metrics == last_bookmark_created.metrics, True)
 
@@ -54,11 +54,11 @@ class BookmarkItTest(unittest.TestCase):
         bookmarks.append(Bookmark(metrics={"metric2": "value2", "metric3": "value3"}))
         bookmark_context.save_bookmarks(bookmarks)
 
-        bookmarks = bookmark_context.get_bookmarks(top=-11)
-        bookmark = bookmarks.get(1)
-        bookmark.replace(microsecond=0)
-        first_bookmark_created = bookmarks.get(1)
-        first_bookmark_created.replace(microsecond=0)
+        bookmarks_from_server = bookmark_context.get_bookmarks(top=-11)
+        bookmark = bookmarks[0]
+        bookmark.timestamp = bookmark.timestamp.replace(microsecond=0)
+        first_bookmark_created = bookmarks_from_server[0]
+        first_bookmark_created.timestamp = first_bookmark_created.timestamp.replace(microsecond=0)
         self.assertEqual(bookmark.timestamp == first_bookmark_created.timestamp, True)
         self.assertEqual(bookmark.metrics == first_bookmark_created.metrics, True)
 
